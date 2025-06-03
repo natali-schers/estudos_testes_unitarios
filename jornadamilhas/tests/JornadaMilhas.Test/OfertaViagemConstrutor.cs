@@ -2,16 +2,16 @@ using JornadaMilhasV1.Modelos;
 
 namespace JornadaMilhas.Test
 {
-    public class OfertaViagemTest
+    public class OfertaViagemConstrutor
     {
-        [Fact]
-        public void TestandoOfertaValida()
+        [Theory]
+        [InlineData("", null, "2025-01-01", "2025-02-01", 0, false)]
+        [InlineData("OrigemTeste", "DestinoTeste", "2025-02-01", "2025-02-08", 100, true)]
+        public void RetornaEhValidoDeAcordoComDadosDeEntrada(string origem, string destino, string dataIda, string dataVolta, double preco, bool validacao)
         {
             // Cenário - Arrange
-            Rota rota = new Rota("OrigemTeste", "DestinoTeste");
-            Periodo periodo = new Periodo(new DateTime(2024, 2, 1), new DateTime(2024, 2, 8));
-            double preco = 100.00;
-            var validacao = true;
+            Rota rota = new Rota(origem, destino);
+            Periodo periodo = new Periodo(DateTime.Parse(dataIda), DateTime.Parse(dataVolta));
 
             // Ação - Act
             OfertaViagem oferta = new OfertaViagem(rota, periodo, preco);
@@ -21,7 +21,7 @@ namespace JornadaMilhas.Test
         }
         
         [Fact]
-        public void TestandoOfertaComRotaNula()
+        public void RetornaErrooSeRotaForNula()
         {
             // Cenário - Arrange
             Rota rota = null;
@@ -37,7 +37,7 @@ namespace JornadaMilhas.Test
         }
 
         [Fact]
-        public void TestandoOfertaComPeriodoInvalido()
+        public void RetornaErroSeDataDestinoForInvalido()
         {
             // Cenário - Arrange
             Rota rota = new Rota("OrigemTeste", "DestinoTeste");
@@ -50,6 +50,22 @@ namespace JornadaMilhas.Test
             // Validação - Assert
             Assert.Contains("Erro: Data de ida não pode ser maior que a data de volta.", oferta.Erros.Sumario);
             Assert.False(oferta.EhValido);
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-250)]
+        public void RetornaMensagemDeErroDePrecoInvalidoQuandoPrecoMenorOuIgualAZero(double preco)
+        {
+            //arrange
+            Rota rota = new Rota("Origem1", "Destino1");
+            Periodo periodo = new Periodo(new DateTime(2024, 8, 20), new DateTime(2024, 8, 30));
+
+            //act
+            OfertaViagem oferta = new OfertaViagem(rota, periodo, preco);
+
+            //assert
+            Assert.Contains("O preço da oferta de viagem deve ser maior que zero.", oferta.Erros.Sumario);
         }
     }
 }
