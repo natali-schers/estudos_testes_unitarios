@@ -57,15 +57,31 @@ namespace JornadaMilhas.Test
         [InlineData(-250)]
         public void RetornaMensagemDeErroDePrecoInvalidoQuandoPrecoMenorOuIgualAZero(double preco)
         {
-            //arrange
+            // Arrange
             Rota rota = new Rota("Origem1", "Destino1");
             Periodo periodo = new Periodo(new DateTime(2024, 8, 20), new DateTime(2024, 8, 30));
 
-            //act
+            // Act
             OfertaViagem oferta = new OfertaViagem(rota, periodo, preco);
 
-            //assert
+            // Assert
             Assert.Contains("O preço da oferta de viagem deve ser maior que zero.", oferta.Erros.Sumario);
+        }
+
+        [Fact]
+        public void RetornaTresErrosDeValidacaoQuandoRotaPeriodoEPrecoSaoInvalidos()
+        {
+            // Arrange
+            int quantidadeEsperada = 3;
+            Rota rota = null;
+            Periodo periodo = new Periodo(new DateTime(2024, 6, 1), new DateTime(2023, 6, 1));
+            double preco = -100;
+
+            // Act
+            OfertaViagem oferta = new OfertaViagem(rota, periodo, preco);
+
+            // Assert
+            Assert.Equal(quantidadeEsperada, oferta.Erros.Count());
         }
     }
 }
