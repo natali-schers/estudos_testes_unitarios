@@ -30,6 +30,7 @@ public class OfertaViagem : Valida
             }
         } 
     }
+    public bool Ativa { get; set; }
 
     public OfertaViagem(Rota rota, Periodo periodo, double preco)
     {
